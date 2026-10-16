@@ -9,6 +9,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import import_template as importer
 
 
@@ -139,6 +141,14 @@ class PortableTemplateTests(unittest.TestCase):
             self.assertEqual(run.returncode, 0, run.stderr)
         preview = json.loads(subprocess.check_output([sys.executable, str(script), "preview", "--json"], text=True))
         self.assertEqual((preview["issues"], len(preview["milestones"])), (51, 7))
+
+    def test_default_resource_is_independent_of_working_directory(self):
+        with tempfile.TemporaryDirectory() as unrelated:
+            output = subprocess.check_output(
+                [sys.executable, str(Path(importer.__file__).resolve()), "preview", "--json"],
+                cwd=unrelated, text=True,
+            )
+        self.assertEqual(json.loads(output)["issues"], 51)
 
 
 if __name__ == "__main__":

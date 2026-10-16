@@ -14,7 +14,10 @@ from urllib.parse import urlparse
 
 
 VERSION = "1.0.0"
-DEFAULT_PACKAGE = Path(__file__).with_name("template.json")
+SCRIPT_DIR = Path(__file__).resolve().parent
+BUNDLED_PACKAGE = SCRIPT_DIR / "template.json"
+DEFAULT_PACKAGE = (BUNDLED_PACKAGE if BUNDLED_PACKAGE.is_file() else
+                   SCRIPT_DIR.parents[1] / "resources/fedramp/20x/class-a/linear/template.json")
 FORMAT = "linear-project-template-portable"
 KEY = re.compile(r"[A-Za-z0-9_-]+\Z")
 
